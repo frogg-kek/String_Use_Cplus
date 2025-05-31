@@ -10,7 +10,7 @@
 #include <vector>
 #include <algorithm>
 
-// Nuskaito failo turinį į wstring
+
 std::wstring nuskaityti_wtekstai(const std::string &failo_pavadinimas) {
     std::wifstream failas(failo_pavadinimas);
     failas.imbue(std::locale(""));
@@ -19,7 +19,6 @@ std::wstring nuskaityti_wtekstai(const std::string &failo_pavadinimas) {
     return turinys.str();
 }
 
-// Nuskaito failą eilutėmis į vektorių
 std::vector<std::wstring> nuskaityti_eilutes(const std::string &failo_pavadinimas) {
     std::wifstream failas(failo_pavadinimas);
     failas.imbue(std::locale(""));
@@ -31,7 +30,7 @@ std::vector<std::wstring> nuskaityti_eilutes(const std::string &failo_pavadinima
     return eilutes;
 }
 
-// Įkelia galūnių sąrašą į rinkinį
+// sarasiukas musu
 std::unordered_set<std::wstring> ikelti_tld(const std::string &failo_pavadinimas) {
     std::wifstream failas(failo_pavadinimas);
     failas.imbue(std::locale(""));
@@ -48,16 +47,15 @@ std::unordered_set<std::wstring> ikelti_tld(const std::string &failo_pavadinimas
 
 int main() {
     
-    std::locale::global(std::locale("en_US.UTF-8")); // nustatymas kad galimybė būtų su UTF-8
+    std::locale::global(std::locale("en_US.UTF-8")); 
     
     std::wstring tekstas = nuskaityti_wtekstai("tekstas.txt");
     std::vector<std::wstring> eilutes = nuskaityti_eilutes("tekstas.txt");
     auto galunes = ikelti_tld("galo_saras.txt");
 
-    // raidiniai simboliai, ≥2 simboliai, ignoruoja skaičius
     std::wregex zodis_re(LR"([^\W\d_]{2,})", std::regex::ECMAScript | std::regex::icase);
 
-    // URL išraiška
+   
     std::wregex url_re(LR"(([\w\.-]+)\.([a-z]{2,}(?:\.[a-z]{2,})?))", std::regex::icase);
 
 
@@ -74,7 +72,7 @@ int main() {
         }
     }
 
-    // Žodžių paminėjimo eilutėse suradimas
+    // eilutės suradimas
     for (size_t i = 0; i < eilutes.size(); ++i) {
         for (std::wsregex_iterator it(eilutes[i].begin(), eilutes[i].end(), zodis_re), end; it != end; ++it) {
             std::wstring zodis = it->str();
@@ -84,7 +82,7 @@ int main() {
         }
     }
 
-    // URL'ų paieška
+    // URL paieška
     for (std::wsregex_iterator it(tekstas.begin(), tekstas.end(), url_re), end; it != end; ++it) {
         std::wstring galas = it->str(2);
         std::transform(galas.begin(), galas.end(), galas.begin(), ::towlower);
@@ -93,7 +91,6 @@ int main() {
         }
     }
 
-    // Rezultatų išvedimas
     std::wofstream zodziai_failas("pasikartoję_zodziai.txt");
     zodziai_failas.imbue(std::locale(""));
     for (const auto &[zodis, kiekis] : zodziu_kiekis) {
